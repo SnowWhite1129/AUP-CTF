@@ -10,14 +10,14 @@
 void magic() {
 	printf("Bingo!\n");
 	showflag();
-	_exit(0);
+	//_exit(0);
 }
 
 int main() {
 	char buf[64];
 	unsigned long addr, value;
 
-	unbuffered();
+	//unbuffered();
 
 	puts("Welcome!");
 	printf("- main @ %p\n", main);

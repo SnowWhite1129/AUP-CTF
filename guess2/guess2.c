@@ -4,6 +4,7 @@
  * License: GPLv2
  */
 #include "tools.c"
+#include <setjmp.h>
 
 static jmp_buf jb;
 static char buf[64];
@@ -15,11 +16,15 @@ int guess(int n) {
 	printf("\nGuess the number: ");
 	if((len = read(0, buf, sizeof(buf))) > 0) {
 		buf[len] = '\0';
+	        printf("a: %ld\n", a);
+		printf("n: %d\n", n);
 		if(a > n && strtoll(buf, NULL, 0) == a) {
 			printf("\nBingo!\n");
 			showflag();
 			return 1;
 		} else {
+			printf("a: %ld\n", a);
+			printf("input: %ld\n", strtoll(buf, NULL, 0));
 			printf("No no no ...\n");
 		}
 	}
@@ -32,6 +37,8 @@ void try_again(int n) {
 	if((len = read(0, buf, sizeof(buf))) > 0) {
 		buf[len] = '\0';
 		v = strtoll(buf, NULL, 0);
+		printf("n: %d\n", n);
+		printf("v: %ld\n", v);
 		if(buf[0] == 'Y' || buf[0] == 'y' || strcasecmp(buf, "yes") == 0 || v != 0)
 			longjmp(jb, 1);
 	}

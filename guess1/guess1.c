@@ -9,7 +9,7 @@ static char buf[64];
 static int g;
 
 int main() {
-	unbuffered();
+	//unbuffered();
 	srand(time(0) ^ getpid());
 	g = rand() & 0xffffff;
 	printf("\nGuess the number: ");
