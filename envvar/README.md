@@ -1,3 +1,6 @@
+# Enviroment
+- apt-get install libseccomp-dev
+# Problem
 Please implement envvar() function that modifies /proc/self/environ for the current process.
 The envvar() should perform the following operations:
 
@@ -19,5 +22,6 @@ Note: You have to include all the required header files by yourself.
 
 Please paste your codes below, and
 use a single line containing only '//EOF' (without quotes) to submit your codes.
-=====
+
+# Solution
 

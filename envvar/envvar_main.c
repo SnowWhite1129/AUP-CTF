@@ -15,6 +15,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include "tools.c"
+
 extern void envvar(int);
 
 char buf[8192];
@@ -61,6 +63,7 @@ int check_envvar(char *secret) {
 	int s, len = 0, ret = -1;
 
 	snprintf(buf, sizeof(buf), "/proc/%d/environ", child);
+	
 	if((s = open(buf, O_RDONLY)) < 0) return -1;
 	if((len = read(s, buf, sizeof(buf))) <= 0) perror("read");
 	close(s);
@@ -70,7 +73,7 @@ int check_envvar(char *secret) {
 		if(strncmp(&buf[s], "SECRET=", 7) == 0) {
 			if(strcmp(secret, &buf[s+7]) == 0) return 0;
 			break;
-		}
+		} 
 	}
 
 	return -1;
@@ -80,6 +83,7 @@ int main() {
 	int fdin[2], fdout[2];
 
 	if(getenv("SHORTCUT") != NULL) {
+		printf("Shortcut\n");
 		envvar(1);
 		exit(0);
 	}
@@ -97,7 +101,7 @@ int main() {
 		for(i = 0; i < 4; i++) { x <<= 16; x |= rand() ^ 0xffff; }
 		snprintf(buf, sizeof(buf), "%llu%llu", x, x>>1);
 	} while(0);
-
+	
 	if(pipe(fdin) < 0)		xerror("pipe");
 	if(pipe(fdout) < 0)		xerror("pipe");
 	if((child = fork()) < 0)	xerror("fork");
@@ -109,14 +113,21 @@ int main() {
 		setup_filter();
 		envvar(0);
 	} else {
-		int s;
+		int s, c;
 		char *secret = strdup(buf);
 		close(fdin[1]);
 		close(fdout[0]);
 		do if((s = read(fdin[0], buf, sizeof(buf))) > 0) {
-			if(strncmp(buf, CHECKENV, s) != 0) break;
-			if(check_envvar(secret) < 0) break;
+			if(strncmp(buf, CHECKENV, s) != 0) {
+				printf("Compare Failed\n");
+				break;
+			}
+			if(c = check_envvar(secret) < 0) {	
+				printf("Checkenv Failed\n");
+				break;
+			}
 			printf("Bingo!\n");
+			showflag();
 			write(fdout[1], "pass", 4);
 			exit(0);
 		} while(0);
