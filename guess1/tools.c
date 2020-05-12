@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+void unbuffered(){
+	setbuf(stdout, NULL);
+	return;
+}
 void showflag(){
 	char FLAG[1024];
 	FILE *input = fopen("FLAG", "r");

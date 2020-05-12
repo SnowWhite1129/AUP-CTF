@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 void unbuffered(){
-	return;
+	setbuf(stdout, NULL);
 }
 void showflag(){
 	char FLAG[1024];
