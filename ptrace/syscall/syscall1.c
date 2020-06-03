@@ -37,16 +37,8 @@ main(int argc, char *argv[]) {
 			if(waitpid(child, &wait_status, 0) < 0) errquit("waitpid");
 			if(!WIFSTOPPED(wait_status) || !(WSTOPSIG(wait_status) & 0x80)) continue;
 			if(ptrace(PTRACE_GETREGS, child, 0, &regs) != 0) errquit("ptrace@parent");
-			if(enter) {	// syscall enter
-				/* rip has to subtract 2 because machine code of 'syscall' = 0x0f 05 */
-				fprintf(stderr, "0x%llx: rax=%llx rdi=%llx rsi=%llx rdx=%llx r10=%llx r8=%llx r9=%llx\n",
-					regs.rip-2, regs.orig_rax, regs.rdi, regs.rsi, regs.rdx, regs.r10, regs.r8, regs.r9);
-				if(regs.orig_rax == 0x3c || regs.orig_rax == 0xe7)
-					fprintf(stderr, "\n"); /* exit || exit_group */
+			if(enter) 	// syscall enter
 				counter++;
-			} else {	// syscall exit
-				fprintf(stderr, "0x%llx: ret = 0x%llx\n", regs.rip-2, regs.rax);
-			}
 			enter ^= 0x01;
 		}
 		fprintf(stderr, "## %lld syscall(s) executed\n", counter);
