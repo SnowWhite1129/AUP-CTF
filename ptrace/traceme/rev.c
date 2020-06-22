@@ -28,27 +28,23 @@ int main(int argc, char *argv[]) {
 		int status;
 		if(waitpid(child, &status, 0) < 0) errquit("waitpid");
 		ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_EXITKILL);
-
 		struct user_regs_struct regs;
 		unsigned long long rip;
-		
 		unsigned long long addr = 0x201b80;
 		long long int data;
 		unsigned long long answer[5];
 		while (WIFSTOPPED(status)){
 			if(ptrace(PTRACE_GETREGS, child, NULL, &regs)==0){
-                                rip = regs.rip;
-                                unsigned long long tmp = rip >> 40;
-                                if(tmp != 0x7f){
+                rip = regs.rip;
+                unsigned long long tmp = rip >> 40;
+                if(tmp != 0x7f){
 					rip &= 0xFFFFFFFFF000;
 					rip += addr;
 					for(int i=0; i<5; ++i){
 						answer[i] = ptrace(PTRACE_PEEKTEXT, child, rip + i*8, 0);
 					}
 				} 
-                         }
-
-
+            }
 			if(ptrace(PTRACE_SINGLESTEP, child, 0, 0) < 0){
 				perror("ptrace");
 			}
@@ -57,10 +53,10 @@ int main(int argc, char *argv[]) {
 		printf("Flag: ");
 		char buf[1005] = "python3 rev.py";
 		for(int i=0; i<5; ++i){
-                        sprintf(buf, "%s %llx ", buf, answer[i]);
-                }
+            sprintf(buf, "%s %llx ", buf, answer[i]);
+        }
 		system(buf);
-		perror("done")	;
+		perror("done");
 	}
 	return 0;
 }

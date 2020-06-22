@@ -11,8 +11,7 @@ void errquit(const char *msg) {
 	exit(-1);
 }
 
-int
-main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 	pid_t child;
 	if(argc < 2) {
 		fprintf(stderr, "usage: %s program [args ...]\n", argv[0]);
@@ -37,5 +36,3 @@ main(int argc, char *argv[]) {
 	}
 	return 0;
 }
-
-
